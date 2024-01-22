@@ -1,7 +1,14 @@
+import { CardWrapper } from "./card-wrapper";
+
 export function LoginForm(){
     return (
-        <div>
+        <CardWrapper
+            headerLabel="Welcome Back!"
+            backButtonLabel="Don't have an account?"
+            backButtonHref="/auth/register"
+            showSocial
+        >
             Login Form!
-        </div>
+        </CardWrapper>
     )
 }
