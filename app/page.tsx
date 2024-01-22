@@ -2,10 +2,11 @@ import Image from "next/image";
 import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import LoginButton from "@/components/auth/login-button";
 
 const font = Poppins({
-  subsets:["latin"],
-  weight:['600']
+  subsets: ["latin"],
+  weight: ['600']
 })
 
 export default function Home() {
@@ -22,9 +23,11 @@ export default function Home() {
           A not so simple authentication service.
         </p>
         <div>
-          <Button variant={"secondary"} size={"lg"}>
+          <LoginButton mode="redirect">
+            <Button variant={"secondary"} size={"lg"}>
               Sign In
-          </Button>
+            </Button>
+          </LoginButton>
         </div>
       </div>
     </main>
