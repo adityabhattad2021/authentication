@@ -1,53 +1,48 @@
 "use client";
+import { useState, useTransition } from "react";
 import { CardWrapper } from "./card-wrapper";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { RegisterSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "../ui/form";
-import * as z from "zod";
-import { LoginSchema } from "@/schema";
+import { register } from "@/actions/register";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
 import { FormMessage as CustomFormMessage } from "../form-message";
-import { useState, useTransition } from "react";
-import { login } from "@/actions/login";
+import { Button } from "../ui/button";
 
-export function LoginForm() {
+export function RegisterForm(){
 
     const [isPending,startTransition]=useTransition();
     const [error,setError]=useState<string | undefined>("");
     const [success,setSuccess]=useState<string | undefined>("");
 
-    const form = useForm<z.infer<typeof LoginSchema>>({
-        resolver: zodResolver(LoginSchema),
-        defaultValues: {
-            email: "",
-            password: ""
+    const form = useForm<z.infer<typeof RegisterSchema>>({
+        resolver:zodResolver(RegisterSchema),
+        defaultValues:{
+            email:"",
+            password:"",
+            name:"",
         }
-    });
+    })
 
-    function onSubmit(values:z.infer<typeof LoginSchema>){
+    function onSubmit(values:z.infer<typeof RegisterSchema>){
         setError("");
         setSuccess("");
         startTransition(()=>{
-            login(values).then((data)=>{
+            register(values).then((data)=>{
                 setError(data.error);
-                setSuccess(data.success)
-            });
+                setSuccess(data.success);
+            })
         })
     }
 
+
     return (
         <CardWrapper
-            headerLabel="Welcome Back!"
-            backButtonLabel="Don't have an account?"
-            backButtonHref="/auth/register"
+            headerLabel="Create an account."
+            backButtonLabel="Already have an account?"
+            backButtonHref="/auth/login"
             showSocial
         >
             <Form {...form}>
@@ -56,6 +51,27 @@ export function LoginForm() {
                     className="space-y-6"
                 >
                     <div className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({field})=>{
+                                return (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Name
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                className="h-10"
+                                                {...field}
+                                                placeholder="John Doe"
+                                                type="name"
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )
+                            }}
+                        />
                         <FormField
                             control={form.control}
                             name="email"
@@ -115,4 +131,5 @@ export function LoginForm() {
             </Form>
         </CardWrapper>
     )
+
 }
