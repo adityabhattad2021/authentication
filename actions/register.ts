@@ -2,7 +2,7 @@
 
 import { RegisterSchema } from "@/schema";
 import * as z from "zod";
-import * as bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 
 
