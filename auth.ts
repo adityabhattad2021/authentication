@@ -19,10 +19,24 @@ export const {
     signIn,
     signOut
 } = NextAuth({
+    // So that it automatically marks email verified on OAuth
+    events: {
+        async linkAccount({ user }) {
+            await db.user.update({
+                where: {
+                    id: user.id,
+                },
+                data: {
+                    emailVerified: new Date(),
+                }
+            })
+        }
+    },
     callbacks: {
         async signIn({ user, account }) {
 
             if (account?.provider !== "credentials") return true;
+
             console.log("HERE IS THE PROBLEM");
 
             if (!user.id) {
