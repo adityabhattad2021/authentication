@@ -30,6 +30,7 @@ export async function login(values: z.infer<typeof LoginSchema>) {
                     return { error: "Something went wrong!" }
             }
         }
+        throw error;
     }
-    return {success:"Successfully logged in!"}
+    return { success: "Successfully logged in!" }
 }
