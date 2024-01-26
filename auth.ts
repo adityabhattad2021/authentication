@@ -20,6 +20,10 @@ export const {
     signOut
 } = NextAuth({
     // So that it automatically marks email verified on OAuth
+    pages: {
+        signIn: "/auth/login",
+        error: "/auth/error"
+    },
     events: {
         async linkAccount({ user }) {
             await db.user.update({

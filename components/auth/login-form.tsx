@@ -17,12 +17,15 @@ import { Button } from "../ui/button";
 import { FormMessage as CustomFormMessage } from "../form-message";
 import { useState, useTransition } from "react";
 import { login } from "@/actions/login";
+import { useSearchParams } from "next/navigation";
 
 export function LoginForm() {
 
-    const [isPending,startTransition]=useTransition();
-    const [error,setError]=useState<string | undefined>("");
-    const [success,setSuccess]=useState<string | undefined>("");
+    const searchParams = useSearchParams();
+    const urlError = searchParams.get("error") === "OAuthAccountNotLinked" ? "Email Already in use with different provider" : ""
+    const [isPending, startTransition] = useTransition();
+    const [error, setError] = useState<string | undefined>("");
+    const [success, setSuccess] = useState<string | undefined>("");
 
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
@@ -32,12 +35,12 @@ export function LoginForm() {
         }
     });
 
-    function onSubmit(values:z.infer<typeof LoginSchema>){
+    function onSubmit(values: z.infer<typeof LoginSchema>) {
         setError("");
         setSuccess("");
-        startTransition(()=>{
-            login(values).then((data)=>{
-                setError(data?.error);
+        startTransition(() => {
+            login(values).then((data) => {
+                setError(data?.error || urlError);
                 setSuccess(data?.success)
             });
         })
@@ -71,7 +74,7 @@ export function LoginForm() {
                                                 type="email"
                                             />
                                         </FormControl>
-                                        <FormMessage/>
+                                        <FormMessage />
                                     </FormItem>
                                 )
                             }}
@@ -79,7 +82,7 @@ export function LoginForm() {
                         <FormField
                             control={form.control}
                             name="password"
-                            render={({field})=>{
+                            render={({ field }) => {
                                 return (
                                     <FormItem>
                                         <FormLabel>Password</FormLabel>
@@ -90,7 +93,7 @@ export function LoginForm() {
                                                 type="password"
                                             />
                                         </FormControl>
-                                        <FormMessage/>
+                                        <FormMessage />
                                     </FormItem>
                                 )
                             }}
