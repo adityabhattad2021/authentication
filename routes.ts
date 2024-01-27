@@ -1,8 +1,11 @@
 export const publicRoutes = [
-    "/"
+    "/",
+    "/auth/verify-email"
 ];
 
 
+
+// This routes can be only accessed when the user is logged out.
 export const authRoutes = [
     "/auth/login",
     "/auth/register",
