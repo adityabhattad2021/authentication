@@ -4,37 +4,49 @@ import { RegisterSchema } from "@/schema";
 import * as z from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
+import { generateVerificationToken } from "@/lib/tokens";
+import { EmailContent, EmailType, generateEmail, sendMail } from "@/utils/emails";
 
 
-export async function register(values:z.infer<typeof RegisterSchema>){
+export async function register(values: z.infer<typeof RegisterSchema>) {
     const validateFields = RegisterSchema.safeParse(values);
-    
-    if(!validateFields.success){
-        return {error:"Invalid fields!"}
+
+    if (!validateFields.success) {
+        return { error: "Invalid fields!" }
     }
 
-    const { email, password, name} = validateFields.data;
-    const hashedPassword = await bcrypt.hash(password,10);
+    const { email, password, name } = validateFields.data;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const existingUser = await db.user.findUnique({
-        where:{
+        where: {
             email,
         }
     })
 
-    if(existingUser){
-        return {error:"This email is already taken"};
+    if (existingUser) {
+        if (existingUser.emailVerified) {
+            return { error: "This email is already taken" };
+        } else {
+            if (!existingUser.email) return;
+            const verificationToken = await generateVerificationToken(existingUser.email);
+            const emailContent: EmailContent = await generateEmail(EmailType.VERIFICATION_EMAIL, verificationToken.token);
+            await sendMail(emailContent, [verificationToken.email]);
+            return { success: "Verification Email Send Successfully!" };
+        }
     }
 
-    // TODO: Verify the user email first.
-
     await db.user.create({
-        data:{
+        data: {
             name,
             email,
-            password:hashedPassword
+            password: hashedPassword
         }
     });
 
-    return {success:"User created successfully!"};
+    const verificationToken = await generateVerificationToken(email);
+    const emailContent: EmailContent = await generateEmail(EmailType.VERIFICATION_EMAIL, verificationToken.token);
+    await sendMail(emailContent, [verificationToken.email]);
+
+    return { success: "Verification Email Send Successfully!" };
 }

@@ -39,9 +39,9 @@ export const {
     callbacks: {
         async signIn({ user, account }) {
 
-            if (account?.provider !== "credentials") return true;
-
-            console.log("HERE IS THE PROBLEM");
+            if (account?.provider !== "credentials") {
+                return true;
+            }
 
             if (!user.id) {
                 return false;

@@ -11,28 +11,28 @@ import { Input } from "../ui/input";
 import { FormMessage as CustomFormMessage } from "../form-message";
 import { Button } from "../ui/button";
 
-export function RegisterForm(){
+export function RegisterForm() {
 
-    const [isPending,startTransition]=useTransition();
-    const [error,setError]=useState<string | undefined>("");
-    const [success,setSuccess]=useState<string | undefined>("");
+    const [isPending, startTransition] = useTransition();
+    const [error, setError] = useState<string | undefined>("");
+    const [success, setSuccess] = useState<string | undefined>("");
 
     const form = useForm<z.infer<typeof RegisterSchema>>({
-        resolver:zodResolver(RegisterSchema),
-        defaultValues:{
-            email:"",
-            password:"",
-            name:"",
+        resolver: zodResolver(RegisterSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+            name: "",
         }
     })
 
-    function onSubmit(values:z.infer<typeof RegisterSchema>){
+    function onSubmit(values: z.infer<typeof RegisterSchema>) {
         setError("");
         setSuccess("");
-        startTransition(()=>{
-            register(values).then((data)=>{
-                setError(data.error);
-                setSuccess(data.success);
+        startTransition(() => {
+            register(values).then((data) => {
+                setError(data?.error);
+                setSuccess(data?.success);
             })
         })
     }
@@ -54,7 +54,7 @@ export function RegisterForm(){
                         <FormField
                             control={form.control}
                             name="name"
-                            render={({field})=>{
+                            render={({ field }) => {
                                 return (
                                     <FormItem>
                                         <FormLabel>
@@ -87,7 +87,7 @@ export function RegisterForm(){
                                                 type="email"
                                             />
                                         </FormControl>
-                                        <FormMessage/>
+                                        <FormMessage />
                                     </FormItem>
                                 )
                             }}
@@ -95,7 +95,7 @@ export function RegisterForm(){
                         <FormField
                             control={form.control}
                             name="password"
-                            render={({field})=>{
+                            render={({ field }) => {
                                 return (
                                     <FormItem>
                                         <FormLabel>Password</FormLabel>
@@ -106,7 +106,7 @@ export function RegisterForm(){
                                                 type="password"
                                             />
                                         </FormControl>
-                                        <FormMessage/>
+                                        <FormMessage />
                                     </FormItem>
                                 )
                             }}
