@@ -11,7 +11,7 @@ import {
     FormMessage,
 } from "../ui/form";
 import * as z from "zod";
-import { LoginSchema } from "@/schema";
+import { LoginSchema } from "@/form-schema";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { FormMessage as CustomFormMessage } from "../form-message";

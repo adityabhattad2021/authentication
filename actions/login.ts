@@ -3,7 +3,7 @@ import { signIn } from "@/auth";
 import { db } from "@/lib/db";
 import { generateVerificationToken } from "@/lib/tokens";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
-import { LoginSchema } from "@/schema";
+import { LoginSchema } from "@/form-schema";
 import { EmailContent, EmailType, generateEmail, sendMail } from "@/utils/emails";
 import { getUserByEmail } from "@/utils/user";
 import { AuthError } from "next-auth";

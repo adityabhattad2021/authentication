@@ -1,7 +1,7 @@
 "use server";
 
 import { generatePasswordResetToken } from "@/lib/tokens";
-import { ResetPasswordSchema } from "@/schema";
+import { ResetPasswordSchema } from "@/form-schema";
 import { EmailContent, EmailType, generateEmail, sendMail } from "@/utils/emails";
 import { getUserByEmail } from "@/utils/user";
 import * as z from "zod";
@@ -23,6 +23,11 @@ export async function reset(values: z.infer<typeof ResetPasswordSchema>) {
     if (!existingUser?.email) {
         return { error: "Email not found." }
     }
+
+    if (existingUser.password === null) {
+        return { error: "This account maybe linked to an OAuth Provider." }
+    }
+
 
     const resetPasswordToken = await generatePasswordResetToken(existingUser.email);
     const emailContent: EmailContent = await generateEmail(EmailType.PASSWORD_RESET_EMAIL, resetPasswordToken.token);

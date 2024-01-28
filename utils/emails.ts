@@ -45,7 +45,7 @@ export async function generateEmail(emailType: EmailType, token: string) {
                   <td style="padding: 20px; text-align: center;">
                     <h2 style="text-align: center;">Password Reset Request</h2>
                     <p style="text-align: center;">You have requested to reset your password. Click the button below to proceed.</p>
-                    <a href="http://localhost:3000/auth/new-password?token=${token}" style="display: inline-block; padding: 10px 20px; margin-top: 20px; border-radius: 5px; background-color: #007bff; color: #fff; text-decoration: none;">Reset Password</a>
+                    <a href="http://localhost:3000/auth/new-password?token=${token}" style="display: inline-block; padding: 10px 20px; margin-top: 20px; border-radius: 5px; background-color: #000; color: #fff; text-decoration: none;">Reset Password</a>
                   </td>
                 </tr>
               </table>

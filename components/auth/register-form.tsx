@@ -3,7 +3,7 @@ import { useState, useTransition } from "react";
 import { CardWrapper } from "./card-wrapper";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { RegisterSchema } from "@/schema";
+import { RegisterSchema } from "@/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { register } from "@/actions/register";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";

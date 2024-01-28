@@ -1,50 +1,54 @@
 "use client";
 
-import * as z from "zod";
+import { NewPasswordSchema } from "@/form-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { ResetPasswordSchema } from "@/form-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { reset } from "@/actions/reset-password";
+import { z } from "zod";
 import { CardWrapper } from "./card-wrapper";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { FormMessage as CustomFormMessage } from "../form-message";
 import { Button } from "../ui/button";
+import { setNewPassword } from "@/actions/new-password";
+import { useSearchParams } from "next/navigation";
 
-export function ResetForm() {
+export function NewPasswordForm() {
 
+    const searchParams = useSearchParams();
+    const token = searchParams.get("token");
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | undefined>();
     const [success, setSuccess] = useState<string | undefined>();
 
-    const form = useForm<z.infer<typeof ResetPasswordSchema>>({
-        resolver: zodResolver(ResetPasswordSchema),
+    const form = useForm<z.infer<typeof NewPasswordSchema>>({
+        resolver: zodResolver(NewPasswordSchema),
         defaultValues: {
-            email: "",
+            password: ""
         }
-    })
+    });
 
-    function onSubmit(values: z.infer<typeof ResetPasswordSchema>) {
+    function onSubmit(values: z.infer<typeof NewPasswordSchema>) {
         setError("");
         setSuccess("");
         startTransition(() => {
-            reset(values).then((data) => {
+            if (!token) {
+                return;
+            }
+            setNewPassword(values, token).then((data) => {
                 setError(data?.error);
                 setSuccess(data?.success);
             })
         })
     }
 
-
-
     return (
         <CardWrapper
-            headerLabel="Forget your password?"
-            backButtonLabel="Back to login"
+            headerLabel="Reset your password."
+            backButtonLabel="Login"
             backButtonHref="/auth/login"
         >
-            <Form {...form}>
+            <Form  {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-6"
@@ -52,19 +56,19 @@ export function ResetForm() {
                     <div className="space-y-6">
                         <FormField
                             control={form.control}
-                            name="email"
+                            name="password"
                             render={({ field }) => {
                                 return (
                                     <FormItem>
                                         <FormLabel>
-                                            Email
+                                            Password
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 className="h-10"
                                                 {...field}
-                                                placeholder="johndoe@gmail.com"
-                                                type="email"
+                                                placeholder="*******"
+                                                type="password"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -85,7 +89,7 @@ export function ResetForm() {
                             className="w-full"
                             disabled={isPending}
                         >
-                            Send reset email
+                            Submit
                         </Button>
                     </div>
                 </form>
