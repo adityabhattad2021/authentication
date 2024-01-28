@@ -18,6 +18,7 @@ import { FormMessage as CustomFormMessage } from "../form-message";
 import { useState, useTransition } from "react";
 import { login } from "@/actions/login";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export function LoginForm() {
 
@@ -94,11 +95,24 @@ export function LoginForm() {
                                             />
                                         </FormControl>
                                         <FormMessage />
+                                        <Button
+                                            size={"sm"}
+                                            variant={"link"}
+                                            asChild
+                                            className="px-1 font-normal"
+                                        >
+                                            <Link
+                                                href="/auth/reset-password"
+                                            >
+                                                Forgot Password?
+                                            </Link>
+                                        </Button>
                                     </FormItem>
                                 )
                             }}
                         />
                     </div>
+
                     <CustomFormMessage
                         type="error"
                         message={error}
