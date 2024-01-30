@@ -2,25 +2,25 @@ import nodemailer from "nodemailer";
 
 
 export type EmailContent = {
-    subject: string;
-    body: string;
+  subject: string;
+  body: string;
 };
 
 
 export enum EmailType {
-    VERIFICATION_EMAIL = "VERIFICATION_EMAIL",
-    PASSWORD_RESET_EMAIL = "PASSWORD_RESET_EMAIL",
-    TWO_FACTOR_AUTHENTICATION_EMAIL = "TWO_FACTOR_AUTHENTICATION_EMAIL",
+  VERIFICATION_EMAIL = "VERIFICATION_EMAIL",
+  PASSWORD_RESET_EMAIL = "PASSWORD_RESET_EMAIL",
+  TWO_FACTOR_AUTHENTICATION_EMAIL = "TWO_FACTOR_AUTHENTICATION_EMAIL",
 }
 
 
 export async function generateEmail(emailType: EmailType, token: string) {
-    let subject = "";
-    let body = "";
-    switch (emailType) {
-        case EmailType.VERIFICATION_EMAIL:
-            subject = "Verify your Email";
-            body = `
+  let subject = "";
+  let body = "";
+  switch (emailType) {
+    case EmailType.VERIFICATION_EMAIL:
+      subject = "Verify your Email";
+      body = `
             <html>
             <body>
               <table style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; width: 100%; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9;">
@@ -34,10 +34,10 @@ export async function generateEmail(emailType: EmailType, token: string) {
               </table>
             </body>
             `;
-            break;
-        case EmailType.PASSWORD_RESET_EMAIL:
-            subject = "Reset Your Password";
-            body = `
+      break;
+    case EmailType.PASSWORD_RESET_EMAIL:
+      subject = "Reset Your Password";
+      body = `
             <html>
             <body>
               <table style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; width: 100%; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9;">
@@ -52,39 +52,46 @@ export async function generateEmail(emailType: EmailType, token: string) {
             </body>
             </html>
             `;
-            break;
+      break;
 
-        default:
-            console.log("[GENERATE_EMAIL]: INVALID EMAIL TYPE");
-    }
-    return { subject, body };
+    default:
+      console.log("[GENERATE_EMAIL]: INVALID EMAIL TYPE");
+  }
+  return { subject, body };
 }
 
 
 const transporter = nodemailer.createTransport({
-    pool: true,
-    service: 'hotmail',
-    port: 2525,
-    auth: {
-        user: process.env.SENDER_EMAIL,
-        pass: process.env.SENDER_EMAIL_PASSWORD
-    },
-    maxConnections: 1,
+  service: 'gmail',
+  host: 'stmp.gmail.com',
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.SENDER_EMAIL,
+    pass: process.env.SENDER_EMAIL_PASSWORD
+  },
 });
 
 
 export async function sendMail(emailContent: EmailContent, sendTo: string[]) {
+  if (process.env.SENDER_EMAIL) {
     const mailOptions = {
-        from: process.env.SENDER_EMAIL,
-        to: sendTo,
-        html: emailContent.body,
-        subject: emailContent.subject
+      from: {
+        name: 'Not so simple NextAuthV0.5',
+        address: process.env.SENDER_EMAIL as string,
+      },
+      to: sendTo,
+      html: emailContent.body,
+      subject: emailContent.subject
     };
 
     transporter.sendMail(mailOptions, (err: any, info: any) => {
-        if (err) {
-            return console.log('[SEND_EMAIL]: Error encountered during sending the email: ', err);
-        }
-        console.log('[SEND_EMAIL]: Success ', info);
+      if (err) {
+        return console.log('[SEND_EMAIL]: Error encountered during sending the email: ', err);
+      }
+      console.log('[SEND_EMAIL]: Success ', info);
     })
+  } else {
+    console.log('[SEND_EMAIL]: Env key not set correctly.');
+  }
 }
