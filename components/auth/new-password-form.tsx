@@ -61,7 +61,7 @@ export function NewPasswordForm() {
                                 return (
                                     <FormItem>
                                         <FormLabel>
-                                            Password
+                                            New Password
                                         </FormLabel>
                                         <FormControl>
                                             <Input

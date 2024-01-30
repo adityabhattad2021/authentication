@@ -1,5 +1,6 @@
 import { getVerificationTokenByEmail } from "@/utils/verification-token";
 import { v4 as uuidv4 } from "uuid";
+import crypto from "crypto";
 import { db } from "./db";
 import { getPasswordResetTokenByEmail } from "@/utils/password-reset-token";
 
