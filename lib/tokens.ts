@@ -8,7 +8,7 @@ import { TwoFactorToken } from "@prisma/client";
 
 export async function generateTwoFactorAuthToken(email:string):Promise<TwoFactorToken>{
     const token = crypto.randomInt(100_000,1_000_000).toString();
-    const expires = new Date(new Date().getTime()+10*60*1000);
+    const expires = new Date(new Date().getTime()+1*60*1000);
 
     const existingToken = await getTwoFactorAuthTokenByEmail(email);
     if(existingToken){

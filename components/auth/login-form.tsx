@@ -25,6 +25,7 @@ export function LoginForm() {
     const searchParams = useSearchParams();
     const urlError = searchParams.get("error") === "OAuthAccountNotLinked" ? "Email Already in use with different provider" : ""
     const [isPending, startTransition] = useTransition();
+    const [showTwofactor, setShowTwoFactor] = useState(false);
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
 
@@ -41,8 +42,20 @@ export function LoginForm() {
         setSuccess("");
         startTransition(() => {
             login(values).then((data) => {
-                setError(data?.error || urlError);
-                setSuccess(data?.success)
+                if (data.error) {
+                    form.reset();
+                    setError(data?.error || urlError);
+                }
+                else if (data.twoFactorTokenSent) {
+                    setShowTwoFactor(true);
+                }
+                else if (data.success) {
+                    form.reset();
+                    setSuccess(data?.success)
+                }
+            }).catch((error) => {
+                setError("Something went wrong!");
+                console.log('[LOGIN_FORM]: ', error);
             });
         })
     }
@@ -60,57 +73,83 @@ export function LoginForm() {
                     className="space-y-6"
                 >
                     <div className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => {
-                                return (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                className="h-10"
-                                                {...field}
-                                                placeholder="johndoe@gmail.com"
-                                                type="email"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )
-                            }}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => {
-                                return (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                className="h-10"
-                                                type="password"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                        <Button
-                                            size={"sm"}
-                                            variant={"link"}
-                                            asChild
-                                            className="px-1 font-normal"
-                                        >
-                                            <Link
-                                                href="/auth/reset-password"
-                                            >
-                                                Forgot Password?
-                                            </Link>
-                                        </Button>
-                                    </FormItem>
-                                )
-                            }}
-                        />
+                        {
+                            !showTwofactor ? (
+                                <>
+                                    <FormField
+                                        control={form.control}
+                                        name="email"
+                                        render={({ field }) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Email</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            className="h-10"
+                                                            {...field}
+                                                            placeholder="johndoe@gmail.com"
+                                                            type="email"
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )
+                                        }}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="password"
+                                        render={({ field }) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Password</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            {...field}
+                                                            className="h-10"
+                                                            type="password"
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                    <Button
+                                                        size={"sm"}
+                                                        variant={"link"}
+                                                        asChild
+                                                        className="px-1 font-normal"
+                                                    >
+                                                        <Link
+                                                            href="/auth/reset-password"
+                                                        >
+                                                            Forgot Password?
+                                                        </Link>
+                                                    </Button>
+                                                </FormItem>
+                                            )
+                                        }}
+                                    />
+                                </>
+                            ) : (
+                                <FormField
+                                    control={form.control}
+                                    name="code"
+                                    render={({ field }) => {
+                                        return (
+                                            <FormItem>
+                                                <FormLabel>Enter the OTP</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        className="h-12"
+                                                        {...field}
+                                                        placeholder="123456"
+                                                        type="text"
+                                                    />
+                                                </FormControl>
+                                            </FormItem>
+                                        )
+                                    }}
+                                />
+                            )
+                        }
                     </div>
 
                     <CustomFormMessage
@@ -126,7 +165,7 @@ export function LoginForm() {
                         className="w-full"
                         disabled={isPending}
                     >
-                        Submit
+                        {showTwofactor ? 'Confirm' : 'Login'}
                     </Button>
                 </form>
             </Form>

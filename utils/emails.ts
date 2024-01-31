@@ -53,7 +53,25 @@ export async function generateEmail(emailType: EmailType, token: string) {
             </html>
             `;
       break;
-
+    case EmailType.TWO_FACTOR_AUTHENTICATION_EMAIL:
+      subject = "Your Two-Factor Authentication Code";
+      body = `
+          <html>
+          <body>
+            <table style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; width: 100%; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9;">
+              <tr>
+                <td style="padding: 20px; text-align: center;">
+                  <h2 style="text-align: center;">Your Authentication Code</h2>
+                  <p style="text-align: center;">Here is your two-factor authentication code. Please enter this code to proceed with your login:</p>
+                  <p style="text-align: center; font-size: 24px; font-weight: bold; margin: 20px 0;">${token}</p>
+                  <p style="text-align: center;">If you didn't request this code, please ignore this email and secure your account.</p>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+          `;
+        break;
     default:
       console.log("[GENERATE_EMAIL]: INVALID EMAIL TYPE");
   }
