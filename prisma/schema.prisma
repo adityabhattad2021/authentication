@@ -70,7 +70,7 @@ model TwoFactorToken {
   id      String   @id @default(cuid())
   email   String
   token   String   @unique
-  expries DateTime
+  expires DateTime
 
   @@unique([email, token])
 }
