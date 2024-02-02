@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
+import { UserButton } from "../auth/user-button";
 
 export function Navbar() {
     const pathname = usePathname();
@@ -53,9 +54,7 @@ export function Navbar() {
                     </Link>
                 </Button>
             </div>
-            <p>
-                User Button
-            </p>
+            <UserButton />
         </nav>
     )
 }
