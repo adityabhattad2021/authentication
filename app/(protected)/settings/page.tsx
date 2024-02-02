@@ -1,9 +1,8 @@
-import { auth, signOut } from "@/auth"
 import { Button } from "@/components/ui/button";
+import { useSession, signOut } from "next-auth/react";
 
-export default async function SettingsPage() {
-    const session = await auth();
-    console.log(session);
+export default function SettingsPage() {
+    const { data: session } = useSession();
 
     return (
         <div className="flex h-screen justify-center items-center">
