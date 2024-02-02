@@ -7,11 +7,9 @@ export default function SettingsPage() {
     const user = useCurrentUser();
 
     return (
-        <div className="flex h-screen justify-center items-center">
-            <form action={async () => {
-                "use server";
-
-                await signOut();
+        <div className="flex  justify-center items-center">
+            <form action={() => {
+                signOut();
             }}>
                 <Button type="submit">
                     Sign Out

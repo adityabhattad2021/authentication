@@ -6,11 +6,15 @@ import { getUserById } from "./utils/user";
 import { getTwoFactorConfirmationByUserId } from "./utils/two-factor-confirmation";
 
 
+export type ExtendedUser = DefaultSession["user"] & {
+    role: string;
+    isTwoFactorEnabled: boolean
+}
+
+
 declare module "next-auth" {
     interface Session {
-        user: DefaultSession["user"] & {
-            role: string;
-        };
+        user: ExtendedUser;
     }
 }
 
@@ -49,19 +53,19 @@ export const {
             }
             const existingUser = await getUserById(user.id);
 
-           
+
             if (!existingUser || !existingUser.emailVerified) {
                 return false;
             }
 
-            if(existingUser?.isTwoFactorEnabled){
+            if (existingUser?.isTwoFactorEnabled) {
                 const twoFactorConfiramtion = await getTwoFactorConfirmationByUserId(user.id);
-                if(!twoFactorConfiramtion){
+                if (!twoFactorConfiramtion) {
                     return false;
                 }
                 await db.twoFactorConfirmation.delete({
-                    where:{
-                        id:twoFactorConfiramtion.id
+                    where: {
+                        id: twoFactorConfiramtion.id
                     }
                 })
             }
@@ -75,6 +79,9 @@ export const {
             if (token?.role && session?.user) {
                 session.user.role = token.role;
             }
+            if (session?.user) {
+                session.user.isTwoFactorEnabled = token.isTwoFactorEnabled;
+            }
             return session;
         },
         async jwt({ token }) {
@@ -86,6 +93,7 @@ export const {
                 return token;
             }
             token.role = existingUser.role;
+            token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
             return token;
         }
     },
