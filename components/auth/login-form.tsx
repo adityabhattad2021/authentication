@@ -33,7 +33,8 @@ export function LoginForm() {
         resolver: zodResolver(LoginSchema),
         defaultValues: {
             email: "",
-            password: ""
+            password: "",
+            code: "",
         }
     });
 

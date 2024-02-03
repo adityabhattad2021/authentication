@@ -2,7 +2,8 @@ import * as z from "zod";
 
 
 export const SettingsSchema = z.object({
-    name: z.optional(z.string())
+    name: z.optional(z.string()),
+    isTwoFactorEnabled: z.optional(z.boolean()),
 })
 
 export const NewPasswordSchema = z.object({

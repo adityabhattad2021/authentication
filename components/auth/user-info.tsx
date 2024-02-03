@@ -60,7 +60,7 @@ export function UserInfo({
                         Two Factor Authentication
                     </p>
                     <Badge
-                        variant={user?.isTwoFactorEnabled ? "success" : "destructive"}
+                        variant={user?.isTwoFactorEnabled ? "default" : "destructive"}
                     >
                         {user?.isTwoFactorEnabled ? "ON" : "OFF"}
                     </Badge>
