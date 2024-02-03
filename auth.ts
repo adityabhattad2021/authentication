@@ -4,11 +4,13 @@ import { db } from "./lib/db";
 import authConfig from "./auth.config";
 import { getUserById } from "./utils/user";
 import { getTwoFactorConfirmationByUserId } from "./utils/two-factor-confirmation";
+import { getAccountByUserId } from "./actions/account";
 
 
 export type ExtendedUser = DefaultSession["user"] & {
     role: string;
-    isTwoFactorEnabled: boolean
+    isTwoFactorEnabled: boolean;
+    isOAuth: boolean;
 }
 
 
@@ -80,7 +82,11 @@ export const {
                 session.user.role = token.role;
             }
             if (session?.user) {
+                session.user.name = token.name;
+                session.user.email = token.email;
+                session.user.role = token.role;
                 session.user.isTwoFactorEnabled = token.isTwoFactorEnabled;
+                session.user.isOAuth = token.isOAuth;
             }
             return session;
         },
@@ -92,6 +98,10 @@ export const {
             if (!existingUser) {
                 return token;
             }
+            const existingAccount = await getAccountByUserId(existingUser.id);
+            token.isOAuth = !!existingAccount;
+            token.name = existingUser.name;
+            token.email = existingUser.email;
             token.role = existingUser.role;
             token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
             return token;
