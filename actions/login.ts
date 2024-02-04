@@ -11,7 +11,7 @@ import * as z from "zod";
 import { getTwoFactorAuthTokenByEmail } from "@/utils/two-factor-auth-token";
 import { getTwoFactorConfirmationByUserId } from "@/utils/two-factor-confirmation";
 
-export async function login(values: z.infer<typeof LoginSchema>) {
+export async function login(values: z.infer<typeof LoginSchema>, callBackUrl: string | null) {
 
     const validatedFields = LoginSchema.safeParse(values);
 
@@ -76,12 +76,13 @@ export async function login(values: z.infer<typeof LoginSchema>) {
             return { twoFactorTokenSent: true };
         }
     }
+    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++", callBackUrl);
 
     try {
         await signIn("credentials", {
             email,
             password,
-            redirectTo: DEFAULT_LOGIN_REDIRECT
+            redirectTo: callBackUrl || DEFAULT_LOGIN_REDIRECT
         });
     } catch (error) {
         if (error instanceof AuthError) {
